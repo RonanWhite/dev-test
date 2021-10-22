@@ -34,14 +34,17 @@ namespace StringPerformanceTest
         public int CountOccurrences()
         {
             int totalCount = 0;
+            
             int currentIndex = 0;
+            SearchValue = SearchValue.ToLower();
+
 
             for (int i = 0; i < NumberOfLines; i++)
             {
                 // loops through all lines of the document
                 currentIndex = 0;
 
-                while ((currentIndex = Lines[i].IndexOf(SearchValue, currentIndex)) != -1) // find index of substring in line from previous index
+                while ((currentIndex = (Lines[i].ToLower()).IndexOf(SearchValue, currentIndex)) != -1) // find index of substring in line from previous index
                 {
                     // found occurrence of substring in string
                     totalCount += 1;
@@ -50,14 +53,14 @@ namespace StringPerformanceTest
 
             }
 
-
             return totalCount;
+
 
             #region Other solutions
             /// Other slower solutions I tried
             /// Below uses regular expressions
+            
             /*
-
             Regex regex = new Regex(SearchValue, RegexOptions.IgnoreCase);
 
             for (int i = 0; i < NumberOfLines; i++)
@@ -88,11 +91,54 @@ namespace StringPerformanceTest
         }
     }
 
+    #region Testing Class
+    /// <summary>
+    /// Testing class, for debugging and testing the CountOccurences method easily
+    /// </summary>
+    public class Test
+    {
+        public int CountOccurences(string FileToRead, string SearchValue)
+        {
+            string fileLocation = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), FileToRead);
+            string[] Lines = File.ReadAllLines(fileLocation);
+            int NumberOfLines = Lines.Count();
+
+
+            SearchValue = SearchValue.ToLower();
+            int totalCount = 0;
+            int currentIndex = 0;
+
+            for (int i = 0; i < NumberOfLines; i++)
+            {
+                // loops through all lines of the document
+                currentIndex = 0;
+
+                while ((currentIndex = (Lines[i].ToLower()).IndexOf(SearchValue, currentIndex)) != -1) // find index of substring in line from previous index
+                {
+                    // found occurrence of substring in string
+                    totalCount += 1;
+                    currentIndex += 1; // increment so it doesnt find the same index next loop
+                }
+
+            }
+
+
+            return totalCount;
+        }
+    }
+    #endregion
+
+
     public class Program
     {
         public static void Main(string[] args)
         {
             BenchmarkRunner.Run<Benchmark>();
+
+            //Test test = new Test();
+            //int result = test.CountOccurences("Files/Bacon10.txt", "Bacon");
+            //Console.WriteLine(result);
+
         }
     }
 }
